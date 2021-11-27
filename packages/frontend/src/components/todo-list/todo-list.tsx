@@ -1,7 +1,7 @@
 import { Component, Host, h, State, Listen } from '@stencil/core';
 
 interface TodoItem {
-  id?: number;
+  ID?: number;
   text: string;
   checked: boolean;
 }
@@ -35,11 +35,13 @@ export class TodoList {
     const item = list[e.detail];
     list[e.detail] = Object.assign({}, item, { checked: !item.checked });
     this.list = list;
-    await fetch(`http://localhost:8080/todos/${item.id}/check`, {method: 'POST'});
+    await fetch(`http://localhost:8080/todos/${item.ID}/check`, {method: 'POST'});
   }
 
   @Listen('onTodoItemRemove')
-  todoItemRemoveHandler(e: CustomEvent) {
+  async todoItemRemoveHandler(e: CustomEvent) {
+    const item = this.list[e.detail];
+    await fetch(`http://localhost:8080/todos/${item.ID}`, {method: 'DELETE'});
     this.list = [...this.list.slice(0, e.detail), ...this.list.slice(e.detail + 1)];
   }
 

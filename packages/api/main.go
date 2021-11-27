@@ -11,7 +11,6 @@ import (
 
 type Todo struct {
 	gorm.Model
-	ID      uint   `json:"id" gorm:"primary_key"`
 	Text    string `json:"text"`
 	Checked bool   `json:"checked"`
 }
@@ -64,6 +63,12 @@ func main() {
 		db.Save(&todo)
 
 		c.JSON(http.StatusOK, todo)
+	})
+
+	r.DELETE("/todos/:id", func(c *gin.Context) {
+		db.Delete(&Todo{}, c.Param("id")) // WARN: do not use the autoincrement id in a real project
+
+		c.Status(http.StatusNoContent)
 	})
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
